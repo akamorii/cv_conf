@@ -4,45 +4,26 @@ services:
   backend:
     build:
       context: ./backend
-      dockerfile: Dockerfile
     container_name: backend
     ports:
       - "8000:8000"
-    env_file:
-      - ./backend/.env
-    depends_on:
-      - postgres
-      - redis
 
   frontend:
     build:
       context: ./frontend
-      dockerfile: Dockerfile
     container_name: frontend
     ports:
       - "3000:80"
     depends_on:
       - backend
 
-  postgres:
-    image: postgres:16
-    container_name: postgres
-    restart: always
-    environment:
-      POSTGRES_DB: appdb
-      POSTGRES_USER: appuser
-      POSTGRES_PASSWORD: apppass
+  cloudflared:
+    build:
+      context: ./cloudflared
+    container_name: cloudflared
+    restart: unless-stopped
+    depends_on:
+      - frontend
+      - backend
     volumes:
-      - pgdata:/var/lib/postgresql/data
-    ports:
-      - "5432:5432"
-
-  redis:
-    image: redis:7-alpine
-    container_name: redis
-    restart: always
-    ports:
-      - "6379:6379"
-
-volumes:
-  pgdata:
+      - ./cloudflared:/etc/cloudflared
