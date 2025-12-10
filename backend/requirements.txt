@@ -2,4 +2,4 @@ fastapi
 uvicorn[standard]
 opencv-python-headless
 mediapipe
-numpy
+numpypython-multipart==0.0.20
